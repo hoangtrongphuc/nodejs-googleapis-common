@@ -197,12 +197,8 @@ async function createAPIRequestAsync<T>(parameters: APIRequestParams) {
           // Gaxios does not natively support onUploadProgress in node.js.
           // Pipe through the pStream first to read the number of bytes read
           // for the purpose of tracking progress.
-          pStream.on('progress', bytesRead => {
-            if (options.onUploadProgress) {
-              options.onUploadProgress({bytesRead});
-            }
-          });
-          part.body.pipe(pStream).pipe(rStream);
+          rStream.write(part.body);
+          rStream.push('\r\n');
         }
       }
       if (!isStream) {
